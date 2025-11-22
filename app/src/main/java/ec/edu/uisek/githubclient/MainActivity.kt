@@ -1,6 +1,7 @@
 package ec.edu.uisek.githubclient
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -15,6 +16,7 @@ import ec.edu.uisek.githubclient.services.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.jvm.java
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -25,10 +27,16 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.newRepoFab.setOnClickListener {
+            displayNewRepoForm() }
+    }
+
+    override fun onResume(){
+        super.onResume()
         setUpRecyclerView()
         fetchRepositories()
     }
-
     private fun setUpRecyclerView(){
         reposAdapter = ReposAdapter()
         binding.reposRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -66,5 +74,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun showMessage(msg : String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun displayNewRepoForm(){
+        Intent(this, RepoForm::class.java).apply {
+            startActivity(this)
+        }
     }
 }
