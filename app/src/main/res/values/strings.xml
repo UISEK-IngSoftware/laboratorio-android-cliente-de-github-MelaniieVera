@@ -8,4 +8,6 @@
     <string name="test_text">Texto de prueba</string>
     <string name="save">Guardar</string>
     <string name="cancel">Cancelar</string>
+    <string name="repo_edit">Editar Repositorio</string>
+
 </resources>

@@ -9,7 +9,7 @@ import ec.edu.uisek.githubclient.models.Repo
 
 // 1. Clase ViewHolder: Contiene las referencias a las vistas de un solo ítem.
 //    Usa la clase de ViewBinding generada para fragment_repo_item.xml.
-class RepoViewHolder(private val binding: FragmentRepoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class RepoViewHolder( val binding: FragmentRepoItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
     // 2. Función para vincular datos a las vistas del ítem.
     //    Por ahora, usaremos datos de ejemplo.
@@ -29,6 +29,8 @@ class RepoViewHolder(private val binding: FragmentRepoItemBinding) : RecyclerVie
 
 class ReposAdapter : RecyclerView.Adapter<RepoViewHolder>() {
 
+    var onEditClick: (Repo) -> Unit = {}
+    var onDeleteClick: (Repo) -> Unit = {}
     private var repositories : List<Repo> = emptyList()
     override fun getItemCount(): Int = repositories.size
 
@@ -44,7 +46,16 @@ class ReposAdapter : RecyclerView.Adapter<RepoViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RepoViewHolder, position: Int) {
-        holder.bind(repositories[position])
+        val repo = repositories[position]
+        holder.bind(repo)
+
+        holder.binding.btnEdit.setOnClickListener {
+            onEditClick(repo)
+        }
+
+        holder.binding.btnDelete.setOnClickListener {
+            onDeleteClick(repo)
+        }
     }
 
     fun updateRepositories(newRepositories : List<Repo>){

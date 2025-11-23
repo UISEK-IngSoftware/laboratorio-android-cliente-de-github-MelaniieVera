@@ -10,8 +10,15 @@ data class Repo(
 
 data class RepoRequest(
     val name: String,
-    val description: String?,
+    val description: String?
 
 )
+
+data class UpdateRepoRequest(
+    val name: String,
+    val description: String?
+)
+
+
 
 

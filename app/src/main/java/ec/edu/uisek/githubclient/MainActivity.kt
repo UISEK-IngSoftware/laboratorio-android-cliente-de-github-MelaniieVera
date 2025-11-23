@@ -38,6 +38,18 @@ class MainActivity : AppCompatActivity() {
         reposAdapter = ReposAdapter()
         binding.reposRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.reposRecyclerView.adapter = reposAdapter
+
+        reposAdapter.onEditClick = { repo ->
+            val intent = Intent(this, EditRepoActivity::class.java)
+            intent.putExtra("repo_name", repo.name)
+            intent.putExtra("repo_desc", repo.description ?: "")
+            intent.putExtra("repo_owner", repo.owner.login)
+            startActivity(intent)
+        }
+
+        reposAdapter.onDeleteClick = { repo ->
+            deleteRepo(repo)
+        }
     }
 
     private fun fetchRepositories(){
@@ -77,5 +89,31 @@ class MainActivity : AppCompatActivity() {
         Intent(this, RepoForm::class.java).apply {
             startActivity(this)
         }
+    }
+
+    private fun deleteRepo(repo: Repo) {
+        val apiService = RetrofitClient.gitHubApiService
+        val call = apiService.deleteRepo(repo.owner.login, repo.name)
+
+        call.enqueue(object : Callback<Unit> {
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                if (response.isSuccessful) {
+                    showMessage("Repositorio eliminado")
+                    fetchRepositories()
+                } else {
+                    val errMsg = when (response.code()) {
+                        401 -> "Error de autenticación"
+                        403 -> "Acceso denegado"
+                        404 -> "No existe el repositorio"
+                        else -> "Error ${response.code()}"
+                    }
+                    showMessage(errMsg)
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                showMessage("Error de conexión: ${t.message}")
+            }
+        })
     }
 }
